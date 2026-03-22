@@ -53,6 +53,8 @@ Note: Challenge 7 (AOT Reverse Engineering) on iOS requires a decrypted binary f
 | 9 | M7: Authorization | Insecure Authorization | `Intermediate` |
 | 10 | M2/M6: Leakage | Insecure Data Leakage | `Beginner` |
 
+Detailed technical analysis and remediation for all challenges can be found in [SOLUTIONS.md](SOLUTIONS.md).
+
 ---
 
 ## Detailed Objectives
@@ -90,6 +92,3 @@ Note: Challenge 7 (AOT Reverse Engineering) on iOS requires a decrypted binary f
 **Objective:** Exploit the application's lifecycle management by sending the app to the background and extracting the cached OS screenshot containing sensitive financial data. Note for White-Box analysis: There is no explicitly vulnerable code snippet here; the flaw is the architectural failure to implement lifecycle management hooks to obscure the screen.
 
 ---
-
-## Learning Resources
-For a detailed analysis of each vulnerability, exploitation methods, and secure implementation strategies, please refer to the [SOLUTIONS.md](SOLUTIONS.md) file.

@@ -188,6 +188,45 @@ void _handleDeepLink(Uri uri) {
 ---
 
 <details>
+<summary><b>Challenge 6: Security Misconfiguration (OWASP M8)</b></summary>
+
+### 1. Analysis
+The application contains a hidden "Developer Menu" that is accessible through an undocumented gesture (5 rapid taps on the account balance). This is a classic example of **Security by Obscurity**, where developers assume that administrative or debugging features are safe as long as they are hidden from the standard UI flow. In a production environment, this misconfiguration allows unauthorized users to access sensitive information, such as API keys, environment variables, or administrative actions like wiping the local database.
+
+### 2. Exploitation Steps
+1.  **Perform Static Analysis**: A security researcher would use a Flutter reverse-engineering tool like **blutter** to dump the application's Dart metadata, including strings, classes, and method names.
+2.  **Identify Hidden Features**: Searching for keywords such as "Dev", "Admin", or "Secret" within the dumped metadata would reveal the existence of the `DevMenuScreen` class.
+3.  **Trace Code Logic**: By analyzing the `DashboardScreen` logic, the researcher can identify the `_handleDevMenuTap` method and its associated 5-tap counter, revealing the exact trigger for the hidden menu.
+4.  **Extract Sensitive Data**: Trigger the gesture within the application to access the Developer Menu and extract the "Debug API Key" and environment information.
+
+### 3. Mitigation
+Debugging and administrative tools must be entirely excluded from release builds. Developers should use compile-time constants provided by the Flutter framework, such as `kDebugMode` from the `foundation` package, to conditionally include these features.
+
+**Secure Implementation Strategy:**
+
+```dart
+import 'package:flutter/foundation.dart';
+
+// Use kDebugMode to ensure the gesture detector is only active in debug builds
+Widget buildBalance() {
+  final Text balanceWidget = Text(_balance);
+
+  if (kDebugMode) {
+    return GestureDetector(
+      onTap: _handleDevMenuTap,
+      child: balanceWidget,
+    );
+  }
+
+  return balanceWidget;
+}
+```
+Furthermore, sensitive configuration data like API keys should never be hardcoded in the source code; they should be managed through secure environment variables and obfuscated during the build process.
+</details>
+
+---
+
+<details>
 <summary><b>Challenge 7: Insufficient Cryptography (OWASP M10)</b></summary>
 
 ### 1. Analysis
@@ -350,46 +389,3 @@ Future<void> secureScreen() async {
 }
 ```
 </details>
-
-
-
-
----
-
-<details>
-<summary><b>Challenge 6: Security Misconfiguration (OWASP M8)</b></summary>
-
-### 1. Analysis
-The application contains a hidden "Developer Menu" that is accessible through an undocumented gesture (5 rapid taps on the account balance). This is a classic example of **Security by Obscurity**, where developers assume that administrative or debugging features are safe as long as they are hidden from the standard UI flow. In a production environment, this misconfiguration allows unauthorized users to access sensitive information, such as API keys, environment variables, or administrative actions like wiping the local database.
-
-### 2. Exploitation Steps
-1.  **Perform Static Analysis**: A security researcher would use a Flutter reverse-engineering tool like **blutter** to dump the application's Dart metadata, including strings, classes, and method names.
-2.  **Identify Hidden Features**: Searching for keywords such as "Dev", "Admin", or "Secret" within the dumped metadata would reveal the existence of the `DevMenuScreen` class.
-3.  **Trace Code Logic**: By analyzing the `DashboardScreen` logic, the researcher can identify the `_handleDevMenuTap` method and its associated 5-tap counter, revealing the exact trigger for the hidden menu.
-4.  **Extract Sensitive Data**: Trigger the gesture within the application to access the Developer Menu and extract the "Debug API Key" and environment information.
-
-### 3. Mitigation
-Debugging and administrative tools must be entirely excluded from release builds. Developers should use compile-time constants provided by the Flutter framework, such as `kDebugMode` from the `foundation` package, to conditionally include these features.
-
-**Secure Implementation Strategy:**
-
-```dart
-import 'package:flutter/foundation.dart';
-
-// Use kDebugMode to ensure the gesture detector is only active in debug builds
-Widget buildBalance() {
-  final Text balanceWidget = Text(_balance);
-
-  if (kDebugMode) {
-    return GestureDetector(
-      onTap: _handleDevMenuTap,
-      child: balanceWidget,
-    );
-  }
-
-  return balanceWidget;
-}
-```
-Furthermore, sensitive configuration data like API keys should never be hardcoded in the source code; they should be managed through secure environment variables and obfuscated during the build process.
-</details>
-

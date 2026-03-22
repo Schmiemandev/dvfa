@@ -22,6 +22,15 @@ flutter build apk --release
 
 Note regarding Challenge 7 (Reverse Engineering): To ensure the effectiveness of reverse-engineering tools like blutter or reFlutter, the application should be compiled without the `--obfuscate` flag. This ensures that the Dart string pools and class structures remain recoverable during analysis and avoids unnecessary work.
 
+### iOS Support
+Due to Apple's code-signing requirements, a pre-compiled .ipa is not provided. To assess the iOS version, clone the repository on a macOS machine and build via Xcode:
+
+```bash
+flutter build ios --no-codesign
+```
+
+Note: Challenge 7 (AOT Reverse Engineering) on iOS requires a decrypted binary from a jailbroken device to extract the App framework for analysis.
+
 ---
 
 ## Challenge List
